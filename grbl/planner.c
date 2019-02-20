@@ -333,8 +333,8 @@ uint8_t plan_buffer_line(float *target, plan_line_data_t *pl_data)
   // Copy position data based on type of motion being planned.
   if (block->condition & PL_COND_FLAG_SYSTEM_MOTION) { 
     #ifdef COREXY
-      position_steps[X_AXIS] = system_convert_corexy_to_x_axis_steps(sys_position);
-      position_steps[Y_AXIS] = system_convert_corexy_to_y_axis_steps(sys_position);
+      position_steps[X_AXIS] = system_convert_corexy_to_axis_steps(X_AXIS, sys_position);
+      position_steps[Y_AXIS] = system_convert_corexy_to_axis_steps(Y_AXIS, sys_position);
       position_steps[Z_AXIS] = sys_position[Z_AXIS];
     #else
       memcpy(position_steps, sys_position, sizeof(sys_position)); 
@@ -480,13 +480,7 @@ void plan_sync_position()
   uint8_t idx;
   for (idx=0; idx<N_AXIS; idx++) {
     #ifdef COREXY
-      if (idx==X_AXIS) {
-        pl.position[X_AXIS] = system_convert_corexy_to_x_axis_steps(sys_position);
-      } else if (idx==Y_AXIS) {
-        pl.position[Y_AXIS] = system_convert_corexy_to_y_axis_steps(sys_position);
-      } else {
-        pl.position[idx] = sys_position[idx];
-      }
+      pl.position[idx] = system_convert_corexy_to_axis_steps(idx, sys_position);
     #else
       pl.position[idx] = sys_position[idx];
     #endif
